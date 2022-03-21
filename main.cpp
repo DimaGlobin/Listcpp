@@ -3,6 +3,8 @@
 
 #define DELFAIL -1
 #define DELOK 1
+#define GRAPHOK 2
+#define GRAPHFAIL -2
 
 class CList;
 class Node;
@@ -35,7 +37,7 @@ public:
     Node* node_ins (Node* elem, Elem_t data);
     int node_del (Node* elem);
     void CList_dump();
-    void CList_graph();
+    int CList_graph();
 };
 
 Node* CList::node_ins(Node* elem, Elem_t data) {
@@ -112,9 +114,9 @@ void Node::node_dump (){
 }
 
 CList::CList() :
-    head_ (nullptr),
-    tail_ (nullptr),
-    num_of_elem_ (0)
+        head_ (nullptr),
+        tail_ (nullptr),
+        num_of_elem_ (0)
 {
 
 }
@@ -153,18 +155,35 @@ void CList::CList_dump() {
     }
 }
 
-void CList::CList_graph() {
+int CList::CList_graph() {
 
     Node* elem = this -> head_;
 
+    if (elem == nullptr)
+        return GRAPHFAIL;
+
     FILE* dms = fopen("dmszsr.txt", "w");
     fprintf(dms, "digraph {\n");
-    fprintf(dms, "Node_%p [shape = record, label = \"{ Data = %d | Next = 0x%p | Prev = 0x%p }\"]\n", elem, elem -> data_, elem-> next_, elem -> prev_);
+    while (elem != nullptr){
+        fprintf(dms, "Node_%p [shape = record, label = \"{ Data = %d | Next = 0x%p | Prev = 0x%p }\"]\n", elem, elem -> data_, elem-> next_, elem -> prev_);
+        elem = elem -> next_;
+    }
+
+    elem = this -> head_;
+
+    while (elem != nullptr) {
+        if (elem -> next_ != nullptr)
+            fprintf(dms, "Node_%p->Node_%p;\n", elem, elem -> next_);
+        elem = elem -> next_;
+    }
+
     fprintf(dms, "}");
     fclose(dms);
 
     system("dot -Tpng -odmszsr.png dmszsr.txt");
-    system("start dmszsr.png");
+    system("start ~/dmszsr.png");
+
+    return GRAPHOK;
 }
 
 int main() {
@@ -176,20 +195,6 @@ int main() {
     Node* elem3 = l1.node_ins(elem2, 40);
     l1.node_del(elem2);
     l1.CList_graph();
-
-    /*FILE* dms = fopen("dmszsr.txt", "w");
-    fprintf(dms, "digraph {\n");
-    fprintf(dms, "Node_%p [shape = record, label = \"{ Data = %d | Next = 0x%p | Prev = 0x%p }\"]\n", head, head -> data_, head-> next_, head -> prev_);
-    fprintf(dms, "}");
-    fclose(dms);
-
-    system("dot -Tpng -odmszsr.png dmszsr.txt");
-    system("start dmszsr.png"); */
-
-    /*Node* tail = head -> node_ins(20);
-    Node* elem1 = head -> node_ins(30);
-    Node* elem2 = head -> node_ins(40);
-    l1.CList_dump();*/
 
     return 0;
 }

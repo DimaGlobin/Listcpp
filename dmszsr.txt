@@ -1,0 +1,7 @@
+digraph {
+Node_0x55d9af21eeb0 [shape = record, label = "{ Data = 10 | Next = 0x0x55d9af21eee0 | Prev = 0x(nil) }"]
+Node_0x55d9af21eee0 [shape = record, label = "{ Data = 20 | Next = 0x0x55d9af21ef40 | Prev = 0x0x55d9af21eeb0 }"]
+Node_0x55d9af21ef40 [shape = record, label = "{ Data = 40 | Next = 0x(nil) | Prev = 0x0x55d9af21eee0 }"]
+Node_0x55d9af21eeb0->Node_0x55d9af21eee0;
+Node_0x55d9af21eee0->Node_0x55d9af21ef40;
+}
